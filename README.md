@@ -1,3 +1,6 @@
+> [!NOTE]
+> This is a community-maintained fork of [Readest](https://github.com/readest/readest), focused on transparent, distraction-free reading on Windows. It adds transparent reading modes, window pinning, hover-to-hide controls, and disables automatic update prompts. Windows installers are published on this fork's [Releases page](https://github.com/jezian1/readest/releases).
+
 <div align="center">
   <a href="https://readest.com?utm_source=github&utm_medium=referral&utm_campaign=readme" target="_blank">
     <img src="https://github.com/readest/readest/blob/main/apps/readest-app/src-tauri/icons/icon.png?raw=true" alt="Readest Logo" width="20%" />
@@ -135,7 +138,7 @@ To get started with Readest, follow these steps to clone and build the project.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/readest/readest.git
+git clone https://github.com/jezian1/readest.git
 cd readest
 ```
 
@@ -316,9 +319,9 @@ The following fonts are utilized in this software, either bundled within the app
 [link-appstore]: https://apps.apple.com/app/apple-store/id6738622779?pt=127463130&ct=github&mt=8
 [link-website]: https://readest.com?utm_source=github&utm_medium=referral&utm_campaign=readme
 [link-web-readest]: https://web.readest.com
-[link-gh-releases]: https://github.com/readest/readest/releases
-[link-gh-commits]: https://github.com/readest/readest/commits/main
-[link-gh-pulse]: https://github.com/readest/readest/pulse
+[link-gh-releases]: https://github.com/jezian1/readest/releases
+[link-gh-commits]: https://github.com/jezian1/readest/commits/transparent-reader
+[link-gh-pulse]: https://github.com/jezian1/readest/pulse
 [link-gh-wiki]: https://github.com/readest/readest/wiki
 [link-discord]: https://discord.gg/gntyVNk3BJ
 [link-parallel-read]: https://readest.com/#parallel-read

@@ -7,6 +7,8 @@ import {
   CJK_SERIF_FONTS,
 } from '@/services/constants';
 import { ViewSettings } from '@/types/book';
+import { ReadSettings } from '@/types/settings';
+import { useSettingsStore } from '@/store/settingsStore';
 import {
   themes,
   Palette,
@@ -14,6 +16,7 @@ import {
   generateLightPalette,
   generateDarkPalette,
 } from '@/styles/themes';
+import { isTauriAppPlatform } from '@/services/environment';
 import { getOSPlatform } from './misc';
 
 const getFontStyles = (
@@ -100,11 +103,23 @@ const getColorStyles = (
   overrideColor: boolean,
   invertImgColorInDark: boolean,
   themeCode: ThemeCode,
+  readSettings?: ReadSettings,
 ) => {
   const { bg, fg, primary, isDarkMode } = themeCode;
+  const transparencyMode = readSettings?.transparencyMode ?? 'off';
+  const transparencyOpacity =
+    transparencyMode === 'background'
+      ? 0
+      : Math.min(100, Math.max(0, readSettings?.transparencyOpacity ?? 70));
+  const supportsTransparency =
+    isTauriAppPlatform() && ['windows', 'linux'].includes(getOSPlatform());
+  const backgroundColor =
+    supportsTransparency && transparencyMode !== 'off'
+      ? `color-mix(in srgb, ${bg} ${transparencyOpacity}%, transparent)`
+      : bg;
   const colorStyles = `
     html {
-      --theme-bg-color: ${bg};
+      --theme-bg-color: ${backgroundColor};
       --theme-fg-color: ${fg};
       --theme-primary-color: ${primary};
       color-scheme: ${isDarkMode ? 'dark' : 'light'};
@@ -120,18 +135,18 @@ const getColorStyles = (
       background: var(--background-set, none);
     }
     section, div, p, font, h1, h2, h3, h4, h5, h6 {
-      ${overrideColor ? `background-color: ${bg} !important;` : ''}
+      ${overrideColor ? `background-color: ${backgroundColor} !important;` : ''}
       ${overrideColor ? `color: ${fg} !important;` : ''}
     }
     pre, span { /* inline code blocks */
-      ${overrideColor ? `background-color: ${bg} !important;` : ''}
+      ${overrideColor ? `background-color: ${backgroundColor} !important;` : ''}
     }
     a:any-link {
       ${overrideColor ? `color: ${primary};` : isDarkMode ? `color: lightblue;` : ''}
       text-decoration: none;
     }
     body.pbg {
-      ${isDarkMode ? `background-color: ${bg} !important;` : ''}
+      ${isDarkMode ? `background-color: ${backgroundColor} !important;` : ''}
     }
     img {
       ${isDarkMode && invertImgColorInDark ? 'filter: invert(100%);' : ''}
@@ -139,7 +154,7 @@ const getColorStyles = (
     }
     /* horizontal rule #1649 */
     *:has(> hr[class]):not(body) {
-      background-color: ${bg};
+      background-color: ${backgroundColor};
     }
     hr {
       mix-blend-mode: multiply;
@@ -167,7 +182,7 @@ const getColorStyles = (
     /* for the Feedbooks eBooks */
     .chapterHeader, .chapterHeader * {
       border-color: unset;
-      background-color: ${bg} !important;
+      background-color: ${backgroundColor} !important;
     }
   `;
   return colorStyles;
@@ -442,7 +457,11 @@ export const getThemeCode = () => {
   } as ThemeCode;
 };
 
-export const getStyles = (viewSettings: ViewSettings, themeCode?: ThemeCode) => {
+export const getStyles = (
+  viewSettings: ViewSettings,
+  themeCode?: ThemeCode,
+  readSettings?: ReadSettings,
+) => {
   if (!themeCode) {
     themeCode = getThemeCode();
   }
@@ -473,10 +492,13 @@ export const getStyles = (viewSettings: ViewSettings, themeCode?: ThemeCode) => 
     viewSettings.fontWeight!,
     viewSettings.overrideFont!,
   );
+  const currentReadSettings =
+    readSettings ?? useSettingsStore.getState().settings.globalReadSettings;
   const colorStyles = getColorStyles(
     viewSettings.overrideColor!,
     viewSettings.invertImgColorInDark!,
     themeCode,
+    currentReadSettings,
   );
   const translationStyles = getTranslationStyles(viewSettings.showTranslateSource!);
   const userStylesheet = viewSettings.userStylesheet!;

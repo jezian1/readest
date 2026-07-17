@@ -3,6 +3,8 @@ import { CustomFont } from '@/styles/fonts';
 import { HighlightColor, HighlightStyle, ViewSettings } from './book';
 
 export type ThemeType = 'light' | 'dark' | 'auto';
+export type ReaderTransparencyMode = 'off' | 'background' | 'window';
+export type ActiveReaderTransparencyMode = Exclude<ReaderTransparencyMode, 'off'>;
 export type LibraryViewModeType = 'grid' | 'list';
 export type LibrarySortByType = 'title' | 'author' | 'updated' | 'created' | 'size' | 'format';
 export type LibraryCoverFitType = 'crop' | 'fit';
@@ -18,6 +20,10 @@ export interface ReadSettings {
   autohideCursor: boolean;
   translationProvider: string;
   translateTargetLang: string;
+  transparencyMode: ReaderTransparencyMode;
+  transparencyLastMode: ActiveReaderTransparencyMode;
+  transparencyOpacity: number;
+  transparencyContentOpacity: number;
 
   highlightStyle: HighlightStyle;
   highlightStyles: Record<HighlightStyle, HighlightColor>;
@@ -42,6 +48,7 @@ export interface SystemSettings {
   keepLogin: boolean;
   autoUpload: boolean;
   alwaysOnTop: boolean;
+  hoverHideWindow: boolean;
   openBookInNewWindow: boolean;
   autoCheckUpdates: boolean;
   screenWakeLock: boolean;

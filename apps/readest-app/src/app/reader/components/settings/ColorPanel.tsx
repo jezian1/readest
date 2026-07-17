@@ -18,12 +18,37 @@ import { useReaderStore } from '@/store/readerStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useResponsiveSize } from '@/hooks/useResponsiveSize';
+import type { ReaderTransparencyMode } from '@/types/settings';
 import { useResetViewSettings } from '../../hooks/useResetSettings';
+import useReaderTransparency from '../../hooks/useReaderTransparency';
 import { saveViewSettings } from '../../utils/viewSettingsHelper';
 import { CODE_LANGUAGES, CodeLanguage, manageSyntaxHighlighting } from '@/utils/highlightjs';
 import { SettingsPanelPanelProp } from './SettingsDialog';
 import Select from '@/components/Select';
 import ThemeEditor from './ThemeEditor';
+
+const OpacityControl: React.FC<{
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+}> = ({ label, value, onChange }) => (
+  <div className='config-item gap-4'>
+    <span>{label}</span>
+    <div className='flex min-w-40 items-center gap-3'>
+      <input
+        aria-label={label}
+        type='range'
+        className='range range-xs'
+        min={0}
+        max={100}
+        step={5}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+      />
+      <span className='w-10 text-right text-sm'>{value}%</span>
+    </div>
+  </div>
+);
 
 const ColorPanel: React.FC<SettingsPanelPanelProp> = ({ bookKey, onRegisterReset }) => {
   const _ = useTranslation();
@@ -45,6 +70,13 @@ const ColorPanel: React.FC<SettingsPanelPanelProp> = ({ bookKey, onRegisterReset
   const [overrideColor, setOverrideColor] = useState(viewSettings.overrideColor!);
   const [codeHighlighting, setcodeHighlighting] = useState(viewSettings.codeHighlighting!);
   const [codeLanguage, setCodeLanguage] = useState(viewSettings.codeLanguage!);
+  const {
+    mode: transparencyMode,
+    backgroundOpacity,
+    contentOpacity,
+    supportsTransparency,
+    updateTransparency,
+  } = useReaderTransparency();
 
   const resetToDefaults = useResetViewSettings();
 
@@ -54,6 +86,12 @@ const ColorPanel: React.FC<SettingsPanelPanelProp> = ({ bookKey, onRegisterReset
       invertImgColorInDark: setInvertImgColorInDark,
       codeHighlighting: setcodeHighlighting,
       codeLanguage: setCodeLanguage,
+    });
+    updateTransparency({
+      transparencyMode: 'off',
+      transparencyLastMode: 'background',
+      transparencyOpacity: 70,
+      transparencyContentOpacity: 100,
     });
     setThemeColor('default');
     setThemeMode('auto');
@@ -195,6 +233,49 @@ const ColorPanel: React.FC<SettingsPanelPanelProp> = ({ bookKey, onRegisterReset
               onChange={() => setOverrideColor(!overrideColor)}
             />
           </div>
+
+          {supportsTransparency && (
+            <div className='w-full'>
+              <h2 className='mb-2 font-medium'>{_('Transparency')}</h2>
+              <div className='card border-base-200 bg-base-100 border shadow'>
+                <div className='divide-base-200 divide-y'>
+                  <div className='config-item'>
+                    <span>{_('Transparency Mode')}</span>
+                    <Select
+                      value={transparencyMode}
+                      onChange={(event) =>
+                        updateTransparency({
+                          transparencyMode: event.target.value as ReaderTransparencyMode,
+                        })
+                      }
+                      options={[
+                        { value: 'off', label: _('Off') },
+                        { value: 'background', label: _('Text Only') },
+                        { value: 'window', label: _('Entire Window') },
+                      ]}
+                    />
+                  </div>
+
+                  {transparencyMode === 'window' && (
+                    <OpacityControl
+                      label={_('Background Opacity')}
+                      value={backgroundOpacity}
+                      onChange={(value) => updateTransparency({ transparencyOpacity: value })}
+                    />
+                  )}
+                  {transparencyMode !== 'off' && (
+                    <OpacityControl
+                      label={_('Content Opacity')}
+                      value={contentOpacity}
+                      onChange={(value) =>
+                        updateTransparency({ transparencyContentOpacity: value })
+                      }
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div>
             <h2 className='mb-2 font-medium'>{_('Theme Color')}</h2>

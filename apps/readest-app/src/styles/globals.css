@@ -37,7 +37,53 @@ html[data-page='library'] {
 
 html[data-page='reader'] {
   background: theme('colors.base-100');
+  transition: opacity 160ms ease;
 }
+
+html[data-reader-transparency='background'],
+html[data-reader-transparency='window'] {
+  background: transparent;
+}
+
+html[data-reader-transparency='window'] .reader-content > :not(.books-grid),
+html[data-reader-transparency='window']
+  .books-grid
+  > [id^='gridcell-']
+  > :not(.reader-content-opacity-exempt) {
+  opacity: var(--reader-content-opacity, 1);
+}
+
+html[data-reader-transparency='background'] .foliate-viewer {
+  opacity: var(--reader-content-opacity, 1);
+}
+
+html[data-reader-hover-hidden='true'] {
+  pointer-events: none;
+  opacity: 0 !important;
+}
+
+.reader-page.reader-transparency-active .selection-popup,
+.reader-page.reader-transparency-active .selection-popup * {
+  opacity: 1 !important;
+}
+
+.reader-page.reader-transparency-active .selection-popup {
+  color: rgb(255 255 255);
+  background-color: rgb(75 85 99) !important;
+}
+
+.reader-page.reader-transparency-active .selection-popup-triangle {
+  color: rgb(75 85 99) !important;
+  opacity: 1 !important;
+}
+
+.reader-page.reader-transparency-active.bg-base-100,
+.reader-page.reader-transparency-active .bg-base-100,
+.reader-page.reader-transparency-active .bg-base-200,
+.reader-page.reader-transparency-active .bg-base-300 {
+  --tw-bg-opacity: var(--reader-background-opacity, 1);
+}
+
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,

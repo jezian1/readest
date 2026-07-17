@@ -20,6 +20,10 @@ import { interceptWindowOpen } from '@/utils/open';
 import { mountAdditionalFonts } from '@/styles/fonts';
 import { isTauriAppPlatform } from '@/services/environment';
 import { getSysFontsList, setSystemUIVisibility } from '@/utils/bridge';
+import { tauriHandleSetAlwaysOnTop, tauriHandleSetShadow } from '@/utils/window';
+import useHoverHideWindow from '../hooks/useHoverHideWindow';
+import useReaderTransparency from '../hooks/useReaderTransparency';
+import useReaderWindowControls from '../hooks/useReaderWindowControls';
 import { AboutWindow } from '@/components/AboutWindow';
 import { UpdaterWindow } from '@/components/UpdaterWindow';
 import { KOSyncSettingsWindow } from './KOSyncSettings';
@@ -49,6 +53,12 @@ Z-Index Layering Guide:
      • Main reading area or background content.
 */
 
+const setReaderWindowShadow = (enabled: boolean) => {
+  void tauriHandleSetShadow(enabled).catch((error) => {
+    console.warn('Failed to update the reader window shadow', error);
+  });
+};
+
 const Reader: React.FC<{ ids?: string }> = ({ ids }) => {
   const router = useRouter();
   const { envConfig, appService } = useEnv();
@@ -62,6 +72,44 @@ const Reader: React.FC<{ ids?: string }> = ({ ids }) => {
   const { acquireBackKeyInterception, releaseBackKeyInterception } = useDeviceControlStore();
   const [libraryLoaded, setLibraryLoaded] = useState(false);
   const isInitiating = useRef(false);
+
+  const { mode, backgroundOpacity, contentOpacity, supportsTransparency } = useReaderTransparency();
+  const transparencyMode = supportsTransparency ? mode : 'off';
+  const effectiveBackgroundOpacity = transparencyMode === 'background' ? 0 : backgroundOpacity;
+  const { alwaysOnTop, hoverHideWindow, supportsWindowControls, supportsHoverHide } =
+    useReaderWindowControls();
+  useHoverHideWindow(libraryLoaded && alwaysOnTop && supportsHoverHide && hoverHideWindow);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset['readerTransparency'] = transparencyMode;
+    root.style.setProperty('--reader-background-opacity', `${effectiveBackgroundOpacity / 100}`);
+    root.style.setProperty('--reader-content-opacity', `${contentOpacity / 100}`);
+
+    return () => {
+      delete root.dataset['readerTransparency'];
+      root.style.removeProperty('--reader-background-opacity');
+      root.style.removeProperty('--reader-content-opacity');
+    };
+  }, [transparencyMode, effectiveBackgroundOpacity, contentOpacity]);
+
+  useEffect(() => {
+    if (!supportsTransparency || !isTauriAppPlatform()) return;
+    setReaderWindowShadow(transparencyMode === 'off');
+  }, [supportsTransparency, transparencyMode]);
+
+  useEffect(() => {
+    if (!supportsTransparency || !isTauriAppPlatform()) return;
+    return () => setReaderWindowShadow(true);
+  }, [supportsTransparency]);
+
+  useEffect(() => {
+    if (!libraryLoaded || !supportsWindowControls || !isTauriAppPlatform()) return;
+
+    void tauriHandleSetAlwaysOnTop(alwaysOnTop).catch((error) => {
+      console.warn('Failed to update always-on-top state', error);
+    });
+  }, [alwaysOnTop, libraryLoaded, supportsWindowControls]);
 
   useTheme({ systemUIVisible: settings.alwaysShowStatusBar, appThemeColor: 'base-100' });
   useScreenWakeLock(settings.screenWakeLock);
@@ -142,8 +190,12 @@ const Reader: React.FC<{ ids?: string }> = ({ ids }) => {
     <div
       className={clsx(
         `reader-page bg-base-100 text-base-content select-none overflow-hidden`,
+        transparencyMode !== 'off' && 'reader-transparency-active',
         appService?.isIOSApp ? 'h-[100vh]' : 'h-dvh',
-        appService?.hasRoundedWindow && isRoundedWindow && 'window-border rounded-window',
+        appService?.hasRoundedWindow &&
+          isRoundedWindow &&
+          transparencyMode === 'off' &&
+          'window-border rounded-window',
       )}
     >
       <Suspense fallback={<div className='h-[100vh]'></div>}>

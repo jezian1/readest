@@ -15,6 +15,9 @@ import SidebarToggler from './SidebarToggler';
 import BookmarkToggler from './BookmarkToggler';
 import NotebookToggler from './NotebookToggler';
 import SettingsToggler from './SettingsToggler';
+import AlwaysOnTopToggler from './AlwaysOnTopToggler';
+import TransparencyToggler from './TransparencyToggler';
+import HoverHideToggler from './HoverHideToggler';
 import TranslationToggler from './TranslationToggler';
 import ViewMenu from './ViewMenu';
 
@@ -89,7 +92,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
 
   return (
     <div
-      className={clsx('bg-base-100 absolute top-0 w-full')}
+      className={clsx('reader-content-opacity-exempt bg-base-100 absolute top-0 w-full')}
       style={{
         paddingTop: appService?.hasSafeAreaInset ? `${gridInsets.top}px` : '0px',
       }}
@@ -97,7 +100,10 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
       <div
         role='button'
         tabIndex={0}
-        className={clsx('absolute top-0 z-10 h-11 w-full')}
+        className={clsx(
+          'absolute top-0 z-20 h-11 w-full',
+          isHeaderVisible && 'pointer-events-none',
+        )}
         onFocus={() => !appService?.isMobile && setHoveredBookKey(bookKey)}
         onMouseEnter={() => !appService?.isMobile && setHoveredBookKey(bookKey)}
         onTouchStart={() => !appService?.isMobile && setHoveredBookKey(bookKey)}
@@ -115,7 +121,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
       <div
         ref={headerRef}
         className={clsx(
-          `header-bar bg-base-100 absolute top-0 z-10 flex h-11 w-full items-center pr-4`,
+          `header-bar bg-base-100 absolute top-0 z-30 flex h-11 w-full items-center pr-4`,
           `shadow-xs transition-[opacity,margin-top] duration-300`,
           trafficLightInHeader ? 'pl-20' : 'pl-4',
           appService?.hasRoundedWindow && 'rounded-window-top-right',
@@ -131,7 +137,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
         }}
         onMouseLeave={() => !appService?.isMobile && setHoveredBookKey('')}
       >
-        <div className='bg-base-100 sidebar-bookmark-toggler z-20 flex h-full items-center gap-x-4 pe-2'>
+        <div className='bg-base-100 sidebar-bookmark-toggler relative z-20 flex h-full items-center gap-x-4 pe-2'>
           <div className='hidden sm:flex'>
             <SidebarToggler bookKey={bookKey} />
           </div>
@@ -140,14 +146,16 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
         </div>
 
         <div
+          data-tauri-drag-region
           className={clsx(
-            'header-title z-15 bg-base-100 pointer-events-none hidden flex-1 items-center justify-center sm:flex',
+            'header-title bg-base-100 relative z-10 flex h-full min-w-4 flex-1 items-center justify-center',
             !windowButtonVisible && 'absolute inset-0',
           )}
         >
           <h2
+            data-tauri-drag-region
             className={clsx(
-              'line-clamp-1 text-center text-xs font-semibold',
+              'hidden text-center text-xs font-semibold sm:line-clamp-1',
               !windowButtonVisible && 'max-w-[50%]',
             )}
           >
@@ -155,7 +163,10 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
           </h2>
         </div>
 
-        <div className='bg-base-100 z-20 ml-auto flex h-full items-center space-x-4 ps-2'>
+        <div className='bg-base-100 relative z-20 ml-auto flex h-full items-center space-x-4 ps-2'>
+          <AlwaysOnTopToggler />
+          <HoverHideToggler />
+          <TransparencyToggler />
           <SettingsToggler />
           <NotebookToggler bookKey={bookKey} />
           <Dropdown

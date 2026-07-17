@@ -37,7 +37,6 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ setIsDropdownOpen }) => {
   const { themeMode, setThemeMode } = useThemeStore();
   const { settings, setSettings, saveSettings } = useSettingsStore();
   const [isAutoUpload, setIsAutoUpload] = useState(settings.autoUpload);
-  const [isAutoCheckUpdates, setIsAutoCheckUpdates] = useState(settings.autoCheckUpdates);
   const [isAlwaysOnTop, setIsAlwaysOnTop] = useState(settings.alwaysOnTop);
   const [isAlwaysShowStatusBar, setIsAlwaysShowStatusBar] = useState(settings.alwaysShowStatusBar);
   const [isScreenWakeLock, setIsScreenWakeLock] = useState(settings.screenWakeLock);
@@ -92,6 +91,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ setIsDropdownOpen }) => {
 
   const toggleAlwaysOnTop = () => {
     settings.alwaysOnTop = !settings.alwaysOnTop;
+    settings.hoverHideWindow = false;
     setSettings(settings);
     saveSettings(envConfig, settings);
     setIsAlwaysOnTop(settings.alwaysOnTop);
@@ -122,13 +122,6 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ setIsDropdownOpen }) => {
     setSettings(settings);
     saveSettings(envConfig, settings);
     setIsAutoImportBooksOnOpen(settings.autoImportBooksOnOpen);
-  };
-
-  const toggleAutoCheckUpdates = () => {
-    settings.autoCheckUpdates = !settings.autoCheckUpdates;
-    setSettings(settings);
-    saveSettings(envConfig, settings);
-    setIsAutoCheckUpdates(settings.autoCheckUpdates);
   };
 
   const toggleScreenWakeLock = () => {
@@ -216,13 +209,6 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ setIsDropdownOpen }) => {
           label={_('Open Last Book on Start')}
           Icon={isOpenLastBooks ? MdCheck : undefined}
           onClick={toggleOpenLastBooks}
-        />
-      )}
-      {appService?.hasUpdater && (
-        <MenuItem
-          label={_('Check Updates on Start')}
-          Icon={isAutoCheckUpdates ? MdCheck : undefined}
-          onClick={toggleAutoCheckUpdates}
         />
       )}
       <hr className='border-base-200 my-1' />

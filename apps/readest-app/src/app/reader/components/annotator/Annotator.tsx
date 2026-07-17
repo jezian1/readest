@@ -493,7 +493,7 @@ const Annotator: React.FC<{ bookKey: string }> = ({ bookKey }) => {
   ];
 
   return (
-    <div>
+    <div className='reader-content-opacity-exempt'>
       {showWiktionaryPopup && trianglePosition && dictPopupPosition && (
         <WiktionaryPopup
           word={selection?.text as string}

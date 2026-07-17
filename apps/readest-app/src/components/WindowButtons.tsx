@@ -2,7 +2,8 @@ import clsx from 'clsx';
 import React, { useEffect, useRef } from 'react';
 import { useEnv } from '@/context/EnvContext';
 
-import { tauriHandleMinimize, tauriHandleToggleMaximize, tauriHandleClose } from '@/utils/window';
+import { tauriHandleClose, tauriHandleMinimize, tauriHandleToggleMaximize } from '@/utils/window';
+import { eventDispatcher } from '@/utils/event';
 import { isTauriAppPlatform } from '@/services/environment';
 
 interface WindowButtonsProps {
@@ -49,6 +50,10 @@ const WindowButtons: React.FC<WindowButtonsProps> = ({
 
   const handleMouseDown = async (e: MouseEvent) => {
     const target = e.target as HTMLElement;
+    if (target.closest('[data-tauri-drag-region]')) {
+      eventDispatcher.dispatchSync('window-drag-state', { dragging: true });
+      return;
+    }
 
     if (
       target.closest('.btn') ||
@@ -59,12 +64,19 @@ const WindowButtons: React.FC<WindowButtonsProps> = ({
       return;
     }
 
-    const { getCurrentWindow } = await import('@tauri-apps/api/window');
     if (e.buttons === 1) {
+      const { getCurrentWindow } = await import('@tauri-apps/api/window');
+      const currentWindow = getCurrentWindow();
       if (e.detail === 2) {
-        getCurrentWindow().toggleMaximize();
+        currentWindow.toggleMaximize();
       } else {
-        getCurrentWindow().startDragging();
+        eventDispatcher.dispatchSync('window-drag-state', { dragging: true });
+        try {
+          await currentWindow.startDragging();
+        } catch (error) {
+          eventDispatcher.dispatchSync('window-drag-state', { dragging: false });
+          console.warn('Failed to start window dragging', error);
+        }
       }
     }
   };

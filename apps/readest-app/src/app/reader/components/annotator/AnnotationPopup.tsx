@@ -47,7 +47,7 @@ const AnnotationPopup: React.FC<AnnotationPopupProps> = ({
         position={position}
         trianglePosition={trianglePosition}
         className='selection-popup bg-gray-600 text-white'
-        triangleClassName='text-gray-600'
+        triangleClassName='selection-popup-triangle text-gray-600'
       >
         <div
           className={clsx(

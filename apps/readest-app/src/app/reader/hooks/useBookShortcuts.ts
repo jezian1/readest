@@ -11,6 +11,8 @@ import { MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, ZOOM_STEP } from '@/services/constants'
 import { viewPagination } from './usePagination';
 import useShortcuts from '@/hooks/useShortcuts';
 import useBooksManager from './useBooksManager';
+import useReaderTransparency from './useReaderTransparency';
+import useReaderWindowControls from './useReaderWindowControls';
 
 interface UseBookShortcutsProps {
   sideBarBookKey: string | null;
@@ -24,6 +26,8 @@ const useBookShortcuts = ({ sideBarBookKey, bookKeys }: UseBookShortcutsProps) =
   const { getBookData } = useBookDataStore();
   const { toggleNotebook } = useNotebookStore();
   const { getNextBookKey } = useBooksManager();
+  const { toggleTransparency } = useReaderTransparency();
+  const { toggleAlwaysOnTop, toggleHoverHideWindow } = useReaderWindowControls();
   const viewSettings = getViewSettings(sideBarBookKey ?? '');
   const fontSize = viewSettings?.defaultFontSize ?? 16;
   const lineHeight = viewSettings?.lineHeight ?? 1.6;
@@ -155,6 +159,9 @@ const useBookShortcuts = ({ sideBarBookKey, bookKeys }: UseBookShortcutsProps) =
       onToggleSearchBar: showSearchBar,
       onToggleFullscreen: toggleFullscreen,
       onToggleTTS: toggleTTS,
+      onToggleTransparency: toggleTransparency,
+      onToggleAlwaysOnTop: toggleAlwaysOnTop,
+      onToggleHoverHideWindow: toggleHoverHideWindow,
       onReloadPage: reloadPage,
       onQuitApp: quitApp,
       onGoLeft: goLeft,
