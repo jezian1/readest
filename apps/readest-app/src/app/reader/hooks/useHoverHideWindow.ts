@@ -13,11 +13,16 @@ const CURSOR_POLL_INTERVAL_MS = 120;
 const DRAG_START_GRACE_MS = 800;
 const DRAG_MOVE_GRACE_MS = 250;
 
-const useHoverHideWindow = (enabled: boolean) => {
+const useHoverHideWindow = (enabled: boolean, keepHeaderVisible: boolean) => {
   useEffect(() => {
     if (!enabled || !isTauriAppPlatform()) return;
 
     const root = document.documentElement;
+    if (keepHeaderVisible) {
+      root.dataset['readerHoverKeepHeader'] = 'true';
+    } else {
+      delete root.dataset['readerHoverKeepHeader'];
+    }
     let isHidden = false;
     let isPolling = false;
     let hasLoggedError = false;
@@ -119,9 +124,10 @@ const useHoverHideWindow = (enabled: boolean) => {
       isHidden = false;
       clearDragEndTimer();
       delete root.dataset['readerHoverHidden'];
+      delete root.dataset['readerHoverKeepHeader'];
       void tauriHandleSetIgnoreCursorEvents(false).catch(reportError);
     };
-  }, [enabled]);
+  }, [enabled, keepHeaderVisible]);
 };
 
 export default useHoverHideWindow;

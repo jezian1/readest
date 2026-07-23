@@ -210,7 +210,8 @@ const SideBar: React.FC<{
       )}
       <div
         className={clsx(
-          'sidebar-container bg-base-200 flex min-w-60 select-none flex-col',
+          'sidebar-container reader-transparency-surface reader-content-opacity-exempt',
+          'bg-base-200 flex min-w-60 select-none flex-col',
           appService?.isIOSApp ? 'h-[100vh]' : 'h-full',
           'transition-[padding-top] duration-300',
           appService?.hasRoundedWindow && 'rounded-window-top-left rounded-window-bottom-left',

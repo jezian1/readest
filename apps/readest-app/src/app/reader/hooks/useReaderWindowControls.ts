@@ -5,12 +5,17 @@ import { isTauriAppPlatform } from '@/services/environment';
 import { useSettingsStore } from '@/store/settingsStore';
 import type { SystemSettings } from '@/types/settings';
 
-type ReaderWindowSettingsPatch = Partial<Pick<SystemSettings, 'alwaysOnTop' | 'hoverHideWindow'>>;
+type ReaderWindowSettingsPatch = Partial<
+  Pick<SystemSettings, 'alwaysOnTop' | 'hoverHideWindow' | 'hoverHideKeepHeader'>
+>;
 
 const useReaderWindowControls = () => {
   const { envConfig, appService } = useEnv();
   const alwaysOnTop = useSettingsStore((state) => state.settings.alwaysOnTop ?? false);
   const hoverHideWindow = useSettingsStore((state) => state.settings.hoverHideWindow ?? false);
+  const hoverHideKeepHeader = useSettingsStore(
+    (state) => state.settings.hoverHideKeepHeader ?? false,
+  );
   const supportsWindowControls =
     isTauriAppPlatform() && !!appService?.hasWindow && !appService.isMobileApp;
   const supportsHoverHide = supportsWindowControls && !appService?.isMacOSApp;
@@ -40,13 +45,20 @@ const useReaderWindowControls = () => {
     updateWindowSettings({ hoverHideWindow: !hoverHideWindow });
   }, [updateWindowSettings]);
 
+  const setHoverHideKeepHeader = useCallback(
+    (enabled: boolean) => updateWindowSettings({ hoverHideKeepHeader: enabled }),
+    [updateWindowSettings],
+  );
+
   return {
     alwaysOnTop,
     hoverHideWindow,
+    hoverHideKeepHeader,
     supportsWindowControls,
     supportsHoverHide,
     toggleAlwaysOnTop,
     toggleHoverHideWindow,
+    setHoverHideKeepHeader,
   };
 };
 

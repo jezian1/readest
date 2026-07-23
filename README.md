@@ -8,11 +8,18 @@ Readest 的核心阅读能力、界面框架和跨平台基础均来自原项目
 
 ## 下载
 
-- Windows x64 安装包：[v0.9.78-transparent.1](https://github.com/jezian1/readest/releases/tag/v0.9.78-transparent.1)
+- Windows x64 安装包：[v0.9.78-transparent.2](https://github.com/jezian1/readest/releases/tag/v0.9.78-transparent.2)
 - 安装文件：`Readest_0.9.78_x64-setup.exe`
-- SHA-256：`A213349F0F73B55F6DF1FF4C620D73326CEAE5F62FC5BAD55DB47C437741999D`
+- SHA-256：`F6AE2D4CF34A3660DE455B0A4D0B4E7FDD8871E2299275D896DFDBCC51BD1354`
 
 该安装包没有数字签名，Windows SmartScreen 可能显示安全提示。建议下载后先核对 SHA-256 校验值。
+
+## 效果演示
+
+<p align="center">
+  <img src="./data/screenshots/transparent-reading-demo.gif" alt="透明阅读效果演示" width="48%" />
+  <img src="./data/screenshots/reader-controls-demo.gif" alt="透明阅读控制演示" width="48%" />
+</p>
 
 ## 本分支新增与整合的功能
 
@@ -20,14 +27,16 @@ Readest 的核心阅读能力、界面框架和跨平台基础均来自原项目
 
 - 支持开启或关闭透明阅读。
 - 支持背景透明和整体融合两种显示效果。
-- 可分别调整背景透明度与文字内容透明度。
+- 可分别调整背景、整体内容和文字不透明度。
 - 透明状态下保留文字选择工具栏的不透明显示，方便继续使用标注、复制和查询功能。
+- 章节目录、笔记、进度和字体浮层在透明阅读时保持清晰可读。
 
 ### 窗口控制
 
 - 在阅读界面快速开启或关闭窗口置顶。
 - 支持“鼠标移入显示、移出隐藏”的隐身模式。
 - 隐身模式依赖窗口置顶：取消置顶时会自动取消隐身，未开启置顶时不能启用隐身。
+- 可选择在移出隐身时保留顶部章节页眉。
 - 修复透明状态下顶部按钮无法点击、标题栏区域无法拖动等交互问题。
 
 ### 其他调整
@@ -42,7 +51,7 @@ Readest 的核心阅读能力、界面框架和跨平台基础均来自原项目
 已完成的代码检查：
 
 - TypeScript 类型检查通过。
-- 48 个自动化测试通过。
+- 51 个自动化测试通过。
 - 4 个上游集成测试按原项目配置跳过。
 
 ## 本地运行

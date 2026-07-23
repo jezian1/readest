@@ -18,6 +18,7 @@ export type ReaderTransparencyPatch = Partial<
     | 'transparencyLastMode'
     | 'transparencyOpacity'
     | 'transparencyContentOpacity'
+    | 'transparencyTextOpacity'
   >
 >;
 
@@ -26,6 +27,7 @@ export interface ReaderTransparencyState {
   lastMode: ActiveReaderTransparencyMode;
   backgroundOpacity: number;
   contentOpacity: number;
+  textOpacity: number;
 }
 
 export const supportsReaderTransparency = (appService?: AppService | null) =>
@@ -38,6 +40,7 @@ export const getReaderTransparencyState = (
   lastMode: readSettings?.transparencyLastMode ?? 'background',
   backgroundOpacity: clampOpacity(readSettings?.transparencyOpacity ?? 70),
   contentOpacity: clampOpacity(readSettings?.transparencyContentOpacity ?? 100),
+  textOpacity: clampOpacity(readSettings?.transparencyTextOpacity ?? 100),
 });
 
 const refreshReaderStyles = (readSettings: ReadSettings) => {
@@ -68,6 +71,7 @@ export const updateReaderTransparency = (
     transparencyContentOpacity: clampOpacity(
       patch.transparencyContentOpacity ?? current.contentOpacity,
     ),
+    transparencyTextOpacity: clampOpacity(patch.transparencyTextOpacity ?? current.textOpacity),
   };
   const nextSettings = {
     ...settings,

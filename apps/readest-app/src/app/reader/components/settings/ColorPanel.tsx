@@ -74,6 +74,7 @@ const ColorPanel: React.FC<SettingsPanelPanelProp> = ({ bookKey, onRegisterReset
     mode: transparencyMode,
     backgroundOpacity,
     contentOpacity,
+    textOpacity,
     supportsTransparency,
     updateTransparency,
   } = useReaderTransparency();
@@ -92,6 +93,7 @@ const ColorPanel: React.FC<SettingsPanelPanelProp> = ({ bookKey, onRegisterReset
       transparencyLastMode: 'background',
       transparencyOpacity: 70,
       transparencyContentOpacity: 100,
+      transparencyTextOpacity: 100,
     });
     setThemeColor('default');
     setThemeMode('auto');
@@ -263,13 +265,20 @@ const ColorPanel: React.FC<SettingsPanelPanelProp> = ({ bookKey, onRegisterReset
                       onChange={(value) => updateTransparency({ transparencyOpacity: value })}
                     />
                   )}
-                  {transparencyMode !== 'off' && (
+                  {transparencyMode === 'window' && (
                     <OpacityControl
                       label={_('Content Opacity')}
                       value={contentOpacity}
                       onChange={(value) =>
                         updateTransparency({ transparencyContentOpacity: value })
                       }
+                    />
+                  )}
+                  {transparencyMode !== 'off' && (
+                    <OpacityControl
+                      label={_('Text Opacity')}
+                      value={textOpacity}
+                      onChange={(value) => updateTransparency({ transparencyTextOpacity: value })}
                     />
                   )}
                 </div>

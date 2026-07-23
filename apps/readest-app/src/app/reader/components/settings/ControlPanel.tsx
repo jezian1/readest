@@ -10,6 +10,7 @@ import { saveAndReload } from '@/utils/reload';
 import { getMaxInlineSize } from '@/utils/config';
 import { saveViewSettings } from '../../utils/viewSettingsHelper';
 import { SettingsPanelPanelProp } from './SettingsDialog';
+import useReaderWindowControls from '../../hooks/useReaderWindowControls';
 import NumberInput from './NumberInput';
 
 const ControlPanel: React.FC<SettingsPanelPanelProp> = ({ bookKey, onRegisterReset }) => {
@@ -20,6 +21,14 @@ const ControlPanel: React.FC<SettingsPanelPanelProp> = ({ bookKey, onRegisterRes
   const { acquireVolumeKeyInterception, releaseVolumeKeyInterception } = useDeviceControlStore();
   const bookData = getBookData(bookKey)!;
   const viewSettings = getViewSettings(bookKey)!;
+
+  const {
+    alwaysOnTop,
+    hoverHideWindow,
+    hoverHideKeepHeader,
+    supportsHoverHide,
+    setHoverHideKeepHeader,
+  } = useReaderWindowControls();
 
   const [isScrolledMode, setScrolledMode] = useState(viewSettings.scrolled!);
   const [isContinuousScroll, setIsContinuousScroll] = useState(viewSettings.continuousScroll!);
@@ -46,6 +55,7 @@ const ControlPanel: React.FC<SettingsPanelPanelProp> = ({ bookKey, onRegisterRes
       animated: setAnimated,
       allowScript: setAllowScript,
     });
+    setHoverHideKeepHeader(false);
   };
 
   useEffect(() => {
@@ -122,6 +132,29 @@ const ControlPanel: React.FC<SettingsPanelPanelProp> = ({ bookKey, onRegisterRes
 
   return (
     <div className='my-4 w-full space-y-6'>
+      {supportsHoverHide && (
+        <div className='w-full'>
+          <h2 className='mb-2 font-medium'>{_('Hover Hide')}</h2>
+          <div className='card border-base-200 bg-base-100 border shadow'>
+            <div className='divide-base-200 divide-y'>
+              <div className='config-item !h-16'>
+                <div className='flex flex-col gap-1'>
+                  <span>{_('Keep Header Visible While Hidden')}</span>
+                  <span className='text-xs'>{_('Requires Always on Top and Hover Hide')}</span>
+                </div>
+                <input
+                  type='checkbox'
+                  className='toggle'
+                  checked={hoverHideKeepHeader}
+                  disabled={!alwaysOnTop || !hoverHideWindow}
+                  onChange={() => setHoverHideKeepHeader(!hoverHideKeepHeader)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className='w-full'>
         <h2 className='mb-2 font-medium'>{_('Scroll')}</h2>
         <div className='card border-base-200 bg-base-100 border shadow'>
