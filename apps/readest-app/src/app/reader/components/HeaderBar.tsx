@@ -92,7 +92,9 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
 
   return (
     <div
-      className={clsx('reader-content-opacity-exempt bg-base-100 absolute top-0 w-full')}
+      className={clsx(
+        'reader-window-header reader-content-opacity-exempt bg-base-100 absolute top-0 w-full',
+      )}
       style={{
         paddingTop: appService?.hasSafeAreaInset ? `${gridInsets.top}px` : '0px',
       }}

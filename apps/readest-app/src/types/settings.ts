@@ -24,6 +24,7 @@ export interface ReadSettings {
   transparencyLastMode: ActiveReaderTransparencyMode;
   transparencyOpacity: number;
   transparencyContentOpacity: number;
+  transparencyTextOpacity: number;
 
   highlightStyle: HighlightStyle;
   highlightStyles: Record<HighlightStyle, HighlightColor>;
@@ -49,6 +50,7 @@ export interface SystemSettings {
   autoUpload: boolean;
   alwaysOnTop: boolean;
   hoverHideWindow: boolean;
+  hoverHideKeepHeader: boolean;
   openBookInNewWindow: boolean;
   autoCheckUpdates: boolean;
   screenWakeLock: boolean;

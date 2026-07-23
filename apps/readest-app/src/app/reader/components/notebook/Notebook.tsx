@@ -205,7 +205,8 @@ const Notebook: React.FC = ({}) => {
       )}
       <div
         className={clsx(
-          'notebook-container bg-base-200 right-0 flex min-w-60 select-none flex-col',
+          'notebook-container reader-transparency-surface reader-content-opacity-exempt',
+          'bg-base-200 right-0 flex min-w-60 select-none flex-col',
           'font-sans text-base font-normal sm:text-sm',
           appService?.isIOSApp ? 'h-[100vh]' : 'h-full',
           appService?.hasRoundedWindow && 'rounded-window-top-right rounded-window-bottom-right',

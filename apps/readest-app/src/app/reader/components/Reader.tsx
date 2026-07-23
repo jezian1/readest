@@ -76,9 +76,17 @@ const Reader: React.FC<{ ids?: string }> = ({ ids }) => {
   const { mode, backgroundOpacity, contentOpacity, supportsTransparency } = useReaderTransparency();
   const transparencyMode = supportsTransparency ? mode : 'off';
   const effectiveBackgroundOpacity = transparencyMode === 'background' ? 0 : backgroundOpacity;
-  const { alwaysOnTop, hoverHideWindow, supportsWindowControls, supportsHoverHide } =
-    useReaderWindowControls();
-  useHoverHideWindow(libraryLoaded && alwaysOnTop && supportsHoverHide && hoverHideWindow);
+  const {
+    alwaysOnTop,
+    hoverHideWindow,
+    hoverHideKeepHeader,
+    supportsWindowControls,
+    supportsHoverHide,
+  } = useReaderWindowControls();
+  useHoverHideWindow(
+    libraryLoaded && alwaysOnTop && supportsHoverHide && hoverHideWindow,
+    hoverHideKeepHeader,
+  );
 
   useEffect(() => {
     const root = document.documentElement;

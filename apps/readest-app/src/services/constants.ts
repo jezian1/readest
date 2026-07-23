@@ -53,6 +53,7 @@ export const DEFAULT_SYSTEM_SETTINGS: Partial<SystemSettings> = {
   autoUpload: true,
   alwaysOnTop: false,
   hoverHideWindow: false,
+  hoverHideKeepHeader: false,
   openBookInNewWindow: true,
   alwaysShowStatusBar: false,
   autoCheckUpdates: false,
@@ -85,6 +86,7 @@ export const DEFAULT_READSETTINGS: ReadSettings = {
   transparencyLastMode: 'background',
   transparencyOpacity: 70,
   transparencyContentOpacity: 100,
+  transparencyTextOpacity: 100,
 
   customThemes: [],
   highlightStyle: 'highlight',

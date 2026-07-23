@@ -111,12 +111,21 @@ const getColorStyles = (
     transparencyMode === 'background'
       ? 0
       : Math.min(100, Math.max(0, readSettings?.transparencyOpacity ?? 70));
+  const textOpacity = Math.min(100, Math.max(0, readSettings?.transparencyTextOpacity ?? 100));
   const supportsTransparency =
     isTauriAppPlatform() && ['windows', 'linux'].includes(getOSPlatform());
   const backgroundColor =
     supportsTransparency && transparencyMode !== 'off'
       ? `color-mix(in srgb, ${bg} ${transparencyOpacity}%, transparent)`
       : bg;
+  const textOpacityStyles =
+    supportsTransparency && transparencyMode !== 'off' && textOpacity < 100
+      ? `
+    body, body * {
+      -webkit-text-fill-color: color-mix(in srgb, currentColor ${textOpacity}%, transparent);
+    }
+  `
+      : '';
   const colorStyles = `
     html {
       --theme-bg-color: ${backgroundColor};
@@ -127,6 +136,7 @@ const getColorStyles = (
     html, body {
       color: ${fg};
     }
+    ${textOpacityStyles}
     html[has-background], body[has-background] {
       --background-set: var(--theme-bg-color);
     }
